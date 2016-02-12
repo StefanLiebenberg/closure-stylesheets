@@ -216,8 +216,10 @@
     <mkdir dir="${pom.xml.dir}" />
     <copy file="${basedir}/pom.template.xml"
           tofile="${pom.xml}">
-      <filterset>
+      <filterset recurse="true" >
         <filter token="build.yyyymmdd" value="${build.yyyymmdd}" />
+        <filter token="src.dir" value="../../src" />
+        <filter token="tests.dir" value="../../tests" />
       </filterset>
     </copy>
 
@@ -268,7 +270,6 @@
       <arg value="-DrepositoryId=${maven-repository-id}" />
       <arg value="-DpomFile=${pom.xml}" />
       <arg value="-Dfile=${mvn-nodeps.jar}" />
-      <arg value="-Pgpg" />
     </artifact:mvn>
 
     <!-- Sign and deploy the sources artifact. -->
@@ -279,7 +280,6 @@
       <arg value="-DpomFile=${pom.xml}" />
       <arg value="-Dfile=${mvn-sources.jar}" />
       <arg value="-Dclassifier=sources" />
-      <arg value="-Pgpg" />
     </artifact:mvn>
 
     <!-- Sign and deploy the javadoc artifact. -->
@@ -290,8 +290,13 @@
       <arg value="-DpomFile=${pom.xml}" />
       <arg value="-Dfile=${mvn-javadoc.jar}" />
       <arg value="-Dclassifier=javadoc" />
-      <arg value="-Pgpg" />
     </artifact:mvn>
   </target>
+
+   <target name="mvn-sign" depends="pom">
+      <artifact:mvn pom="${pom.xml}">
+           <arg value="gpg:sign" />
+      </artifact:mvn>
+    </target>
 
 </project>
